@@ -10,10 +10,28 @@ import androidx.recyclerview.widget.RecyclerView
 
 class MyAdapter(val newsArrayList: ArrayList<News>, val context: Activity) : RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 
+    private lateinit var myListner: onItemClickListener
+
+    //Interface for click listener
+    interface onItemClickListener{
+        fun onItemClick(position: Int)
+    }
+
+    fun setOnItemClickListener(listener: onItemClickListener){
+        myListner = listener
+    }
+
     //It holds the views of the items in the RecyclerView, so memory can be saved
-    class MyViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    class MyViewHolder(itemView: View, listner: onItemClickListener): RecyclerView.ViewHolder(itemView) {
         val hTitle = itemView.findViewById<TextView>(R.id.headTxt)
         val hImage = itemView.findViewById<ImageView>(R.id.headImg)
+
+        init {
+            itemView.setOnClickListener {
+                listner.onItemClick(adapterPosition)
+
+            }
+        }
     }
 
     //LayoutManager calls these methods for positioning items in the RecyclerView
@@ -22,12 +40,12 @@ class MyAdapter(val newsArrayList: ArrayList<News>, val context: Activity) : Rec
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyAdapter.MyViewHolder {
         val v = LayoutInflater.from(parent.context).inflate(R.layout.each_row_layout, parent, false)
-        return MyViewHolder(v)
+        return MyViewHolder(v, myListner)
     }
 
     //Data population in views
     override fun onBindViewHolder(holder: MyAdapter.MyViewHolder, position: Int) {
-        holder.hTitle.text = newsArrayList[position].newsHeaing
+        holder.hTitle.text = newsArrayList[position].newsHeading
         holder.hImage.setImageResource(newsArrayList[position].newsImage)
     }
 
